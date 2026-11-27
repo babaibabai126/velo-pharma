@@ -1,6 +1,6 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import {
-  Users, Magnet, UserPlus, Tag, FileText, Receipt, Clock, MoreVertical,
+  Users, Magnet, UserPlus, Tag, FileText, Receipt, Clock,
   Handshake, FileCheck2, Briefcase, Flag, ListTodo, TrendingUp, IndianRupee,
 } from "lucide-react";
 import { useStore } from "../store/StoreContext";
@@ -42,6 +42,9 @@ const StatCard = ({ title, value, gradient, tileColor, icon: Icon, period }: Sta
 
 export const Dashboard = ({ onNavigate }: { onNavigate: (t: any) => void }) => {
   const { db } = useStore();
+  const [done, setDone] = useState<Record<string, boolean>>({});
+
+  const toggleTask = (id: string) => setDone((d) => ({ ...d, [id]: !d[id] }));
 
   const stats = useMemo(() => {
     const today = new Date(); today.setHours(0, 0, 0, 0);
@@ -119,7 +122,7 @@ export const Dashboard = ({ onNavigate }: { onNavigate: (t: any) => void }) => {
             <Clock size={18} color="var(--primary)" />
             <div className="card__title">Recent Activities</div>
             <div className="card__actions">
-              <button className="btn btn--ghost btn--icon"><MoreVertical size={15} /></button>
+              <button className="btn btn--ghost btn--sm" onClick={() => onNavigate("sales")}>View All</button>
             </div>
           </div>
           <div className="flex-col gap-2">
@@ -162,21 +165,34 @@ export const Dashboard = ({ onNavigate }: { onNavigate: (t: any) => void }) => {
             <ListTodo size={18} color="var(--primary)" />
             <div className="card__title">Tasks</div>
             <div className="card__actions">
-              <button className="btn btn--ghost btn--sm" onClick={() => onNavigate("inventory")}>+ Add New</button>
+              <button className="btn btn--ghost btn--sm" onClick={() => onNavigate("inventory")}>Manage Stock</button>
             </div>
           </div>
           <div className="flex-col gap-2">
-            {tasks.map((t, i) => (
-              <div key={t.id} className="flex items-center gap-3" style={{
-                padding: "12px 14px", borderRadius: "var(--radius-sm)",
-                border: "1px solid var(--border-subtle)",
-                background: i === 0 ? "var(--grad-rose)" : "transparent",
-              }}>
-                <span className="checkbox" />
-                <div style={{ flex: 1, fontSize: 12.5, color: "var(--text-main)" }}>{t.text}</div>
-                {t.flag && <Flag size={13} color={t.flag === "red" ? "var(--rose)" : "var(--cyan)"} />}
-              </div>
-            ))}
+            {tasks.map((t, i) => {
+              const isDone = done[t.id];
+              return (
+                <div key={t.id} className="flex items-center gap-3" style={{
+                  padding: "12px 14px", borderRadius: "var(--radius-sm)",
+                  border: "1px solid var(--border-subtle)",
+                  background: i === 0 ? "var(--grad-rose)" : "transparent",
+                  opacity: isDone ? 0.55 : 1,
+                }}>
+                  <button
+                    className={`checkbox ${isDone ? "is-checked" : ""}`}
+                    onClick={() => toggleTask(t.id)}
+                    aria-label={isDone ? "Mark as not done" : "Mark as done"}
+                  >
+                    {isDone && "✓"}
+                  </button>
+                  <div style={{
+                    flex: 1, fontSize: 12.5, color: "var(--text-main)",
+                    textDecoration: isDone ? "line-through" : "none",
+                  }}>{t.text}</div>
+                  {t.flag && <Flag size={13} color={t.flag === "red" ? "var(--rose)" : "var(--cyan)"} />}
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>

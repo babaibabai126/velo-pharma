@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { AppShell, type TabId } from "./components/Shell";
 import { ToastProvider } from "./components/ui";
+import { LoginPanel } from "./components/LoginPanel";
+import { useAuth } from "./store/AuthContext";
 import { Dashboard } from "./pages/Dashboard";
 import { BillingTerminal } from "./pages/BillingTerminal";
 import { SalesHistory } from "./pages/SalesHistory";
@@ -11,8 +13,11 @@ import { AnalyticsDashboard } from "./pages/AnalyticsDashboard";
 import { SettingsManager } from "./pages/SettingsManager";
 
 export default function App() {
+  const { user } = useAuth();
   const [tab, setTab] = useState<TabId>("billing");
   const [search, setSearch] = useState("");
+
+  if (!user) return <LoginPanel />;
 
   return (
     <ToastProvider>
@@ -24,7 +29,6 @@ export default function App() {
         {tab === "parties" && <PartyManager globalSearch={search} />}
         {tab === "analytics" && <AnalyticsDashboard />}
         {tab === "settings" && <SettingsManager />}
-        {/* Dashboard accessible as overview above billing when on billing with empty state? handled within */}
       </AppShell>
     </ToastProvider>
   );

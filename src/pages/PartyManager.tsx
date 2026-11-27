@@ -41,12 +41,12 @@ export const PartyManager = ({ globalSearch }: { globalSearch: string }) => {
       {/* Sub tabs + search */}
       <div className="card" style={{ padding: 12 }}>
         <div className="flex items-center gap-3" style={{ flexWrap: "wrap" }}>
-          <div className="flex gap-2">
+          <div className="flex gap-2 subtabs-scroll" style={{ flexWrap: "nowrap", overflowX: "auto", paddingBottom: 2 }}>
             <button className={`btn btn--sm ${sub === "customers" ? "btn--primary" : "btn--ghost"}`} onClick={() => setSub("customers")}><User size={13} /> Customers ({db.customers.length})</button>
             <button className={`btn btn--sm ${sub === "suppliers" ? "btn--primary" : "btn--ghost"}`} onClick={() => setSub("suppliers")}><Truck size={13} /> Suppliers ({db.suppliers.length})</button>
             <button className={`btn btn--sm ${sub === "doctors" ? "btn--primary" : "btn--ghost"}`} onClick={() => setSub("doctors")}><Stethoscope size={13} /> Doctors ({db.doctors.length})</button>
           </div>
-          <div style={{ flex: 1, minWidth: 220, display: "flex", alignItems: "center", gap: 8, background: "var(--bg-surface)", border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-pill)", padding: "8px 14px" }}>
+          <div style={{ flex: 1, minWidth: 180, display: "flex", alignItems: "center", gap: 8, background: "var(--bg-surface)", border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-pill)", padding: "8px 14px" }}>
             <Search size={14} color="var(--text-dim)" />
             <input placeholder="Search name, phone, GSTIN…" value={search} onChange={(e) => setSearch(e.target.value)} style={{ border: "none", background: "transparent", flex: 1, color: "var(--text-main)", fontSize: 13 }} />
           </div>
@@ -57,18 +57,18 @@ export const PartyManager = ({ globalSearch }: { globalSearch: string }) => {
         <div className="card" style={{ padding: 0, overflow: "hidden" }}>
           <div className="table-wrap" style={{ border: "none", borderRadius: 0, maxHeight: "none" }}>
             <table className="table">
-              <thead><tr><th>Name</th><th>Type</th><th>Phone</th><th>GSTIN / DL</th><th>Credit Limit</th><th>Outstanding</th><th>Since</th><th></th></tr></thead>
+              <thead><tr><th>Name</th><th>Type</th><th data-hide="mobile">Phone</th><th data-hide="mobile">GSTIN / DL</th><th data-hide="mobile">Credit Limit</th><th>Outstanding</th><th data-hide="mobile">Since</th><th></th></tr></thead>
               <tbody>
                 {customers.length === 0 && <tr><td colSpan={8}><div className="empty-state"><div className="empty-state__icon"><Users size={22} /></div><div>No customers</div></div></td></tr>}
                 {customers.map((c) => (
                   <tr key={c.id}>
                     <td><div style={{ fontWeight: 600 }}>{c.name}</div>{c.email && <div className="text-xs text-dim">{c.email}</div>}</td>
                     <td><span className={`pill ${c.type === "RETAIL" ? "pill--green" : c.type === "WHOLESALE" ? "pill--purple" : c.type === "HOSPITAL" ? "pill--blue" : "pill--amber"}`}>{c.type}</span></td>
-                    <td className="text-sm">{c.phone || "—"}</td>
-                    <td className="mono text-xs text-muted">{c.gstin || c.dlNumber || "—"}</td>
-                    <td className="mono text-sm">{c.creditLimit ? formatCurrency(c.creditLimit) : "—"}</td>
+                    <td className="text-sm" data-hide="mobile">{c.phone || "—"}</td>
+                    <td className="mono text-xs text-muted" data-hide="mobile">{c.gstin || c.dlNumber || "—"}</td>
+                    <td className="mono text-sm" data-hide="mobile">{c.creditLimit ? formatCurrency(c.creditLimit) : "—"}</td>
                     <td className="mono" style={{ fontWeight: 700, color: c.outstandingBalance > 0 ? "var(--rose)" : "var(--text-main)" }}>{formatCurrency(c.outstandingBalance)}</td>
-                    <td className="text-sm text-muted">{formatDate(c.createdAt)}</td>
+                    <td className="text-sm text-muted" data-hide="mobile">{formatDate(c.createdAt)}</td>
                     <td><div className="flex gap-2">
                       <button className="btn btn--ghost btn--icon btn--sm" onClick={() => setCustModal({ cust: c })}><Edit3 size={13} /></button>
                       {c.name !== "Walk-in Customer" && <button className="btn btn--danger btn--icon btn--sm" onClick={() => { if (confirm(`Delete ${c.name}?`)) { deleteCustomer(c.id); toast("success", "Deleted", `${c.name} removed`); } }}><Trash2 size={13} /></button>}
@@ -85,17 +85,17 @@ export const PartyManager = ({ globalSearch }: { globalSearch: string }) => {
         <div className="card" style={{ padding: 0, overflow: "hidden" }}>
           <div className="table-wrap" style={{ border: "none", borderRadius: 0, maxHeight: "none" }}>
             <table className="table">
-              <thead><tr><th>Supplier</th><th>Contact</th><th>Phone</th><th>GSTIN</th><th>City</th><th>Credit Days</th><th>Outstanding</th><th></th></tr></thead>
+              <thead><tr><th>Supplier</th><th data-hide="mobile">Contact</th><th>Phone</th><th data-hide="mobile">GSTIN</th><th data-hide="mobile">City</th><th data-hide="mobile">Credit Days</th><th>Outstanding</th><th></th></tr></thead>
               <tbody>
                 {suppliers.length === 0 && <tr><td colSpan={8}><div className="empty-state"><div className="empty-state__icon"><Truck size={22} /></div><div>No suppliers</div></div></td></tr>}
                 {suppliers.map((s) => (
                   <tr key={s.id}>
                     <td><div style={{ fontWeight: 600 }}>{s.name}</div>{s.contactPerson && <div className="text-xs text-dim">{s.contactPerson}</div>}</td>
-                    <td className="text-sm">{s.contactPerson || "—"}</td>
+                    <td className="text-sm" data-hide="mobile">{s.contactPerson || "—"}</td>
                     <td className="text-sm">{s.phone}</td>
-                    <td className="mono text-xs text-muted">{s.gstin || "—"}</td>
-                    <td className="text-sm">{s.city || "—"}</td>
-                    <td className="mono text-sm">{s.creditPeriodDays}d</td>
+                    <td className="mono text-xs text-muted" data-hide="mobile">{s.gstin || "—"}</td>
+                    <td className="text-sm" data-hide="mobile">{s.city || "—"}</td>
+                    <td className="mono text-sm" data-hide="mobile">{s.creditPeriodDays}d</td>
                     <td className="mono" style={{ fontWeight: 700, color: s.outstandingBalance > 0 ? "var(--rose)" : "var(--text-main)" }}>{formatCurrency(s.outstandingBalance)}</td>
                     <td><div className="flex gap-2">
                       <button className="btn btn--ghost btn--icon btn--sm" onClick={() => setSupModal({ sup: s })}><Edit3 size={13} /></button>

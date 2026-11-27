@@ -105,7 +105,7 @@ export const SalesHistory = ({ globalSearch }: { globalSearch: string }) => {
             <thead>
               <tr>
                 <th>Bill No.</th><th>Date / Time</th><th>Customer</th><th>Type</th>
-                <th>Items</th><th>Total</th><th>Paid</th><th>Status</th><th>Method</th><th></th>
+                <th data-hide="mobile">Items</th><th>Total</th><th data-hide="mobile">Paid</th><th>Status</th><th data-hide="mobile">Method</th><th></th>
               </tr>
             </thead>
             <tbody>
@@ -121,11 +121,11 @@ export const SalesHistory = ({ globalSearch }: { globalSearch: string }) => {
                     {s.customerPhone && <div className="text-xs text-dim">{s.customerPhone}</div>}
                   </td>
                   <td><span className={`pill ${s.type === "RETAIL" ? "pill--green" : "pill--purple"}`}>{s.type}</span></td>
-                  <td className="mono">{s.items.length}</td>
+                  <td className="mono" data-hide="mobile">{s.items.length}</td>
                   <td className="mono" style={{ fontWeight: 700 }}>{formatCurrency(s.grandTotal)}</td>
-                  <td className="mono" style={{ color: "var(--teal)" }}>{formatCurrency(s.paidAmount)}</td>
+                  <td className="mono" style={{ color: "var(--teal)" }} data-hide="mobile">{formatCurrency(s.paidAmount)}</td>
                   <td><StatusPill status={s.paymentStatus} /></td>
-                  <td className="text-sm">{s.paymentMethod}</td>
+                  <td className="text-sm" data-hide="mobile">{s.paymentMethod}</td>
                   <td>
                     <div className="flex gap-2">
                       <button className="btn btn--ghost btn--icon btn--sm" title="View invoice" onClick={() => setViewSale(s)}><Eye size={13} /></button>

@@ -41,20 +41,20 @@ export const PurchaseManager = () => {
       <div className="card" style={{ padding: 0, overflow: "hidden" }}>
         <div className="table-wrap" style={{ border: "none", borderRadius: 0, maxHeight: "none" }}>
           <table className="table">
-            <thead><tr><th>Invoice</th><th>Supplier</th><th>Date</th><th>Due</th><th>Items</th><th>Subtotal</th><th>Tax</th><th>Total</th><th>Paid</th><th>Status</th><th></th></tr></thead>
+            <thead><tr><th>Invoice</th><th>Supplier</th><th data-hide="mobile">Date</th><th data-hide="mobile">Due</th><th data-hide="mobile">Items</th><th data-hide="mobile">Subtotal</th><th data-hide="mobile">Tax</th><th>Total</th><th data-hide="mobile">Paid</th><th>Status</th><th></th></tr></thead>
             <tbody>
               {db.purchases.length === 0 && <tr><td colSpan={11}><div className="empty-state"><div className="empty-state__icon"><Truck size={22} /></div><div>No purchases yet</div></div></td></tr>}
               {db.purchases.map((p) => (
                 <tr key={p.id}>
                   <td className="mono" style={{ fontWeight: 700 }}>{p.invoiceNumber}</td>
                   <td style={{ fontWeight: 600 }}>{p.supplierName}</td>
-                  <td className="text-sm text-muted">{formatDate(p.purchaseDate)}</td>
-                  <td className="text-sm text-muted">{formatDate(p.dueDate)}</td>
-                  <td className="mono">{p.items.length}</td>
-                  <td className="mono">{formatCurrency(p.subtotal)}</td>
-                  <td className="mono text-sm">{formatCurrency(p.taxAmount)}</td>
+                  <td className="text-sm text-muted" data-hide="mobile">{formatDate(p.purchaseDate)}</td>
+                  <td className="text-sm text-muted" data-hide="mobile">{formatDate(p.dueDate)}</td>
+                  <td className="mono" data-hide="mobile">{p.items.length}</td>
+                  <td className="mono" data-hide="mobile">{formatCurrency(p.subtotal)}</td>
+                  <td className="mono text-sm" data-hide="mobile">{formatCurrency(p.taxAmount)}</td>
                   <td className="mono" style={{ fontWeight: 700 }}>{formatCurrency(p.totalAmount)}</td>
-                  <td className="mono" style={{ color: "var(--teal)" }}>{formatCurrency(p.paidAmount)}</td>
+                  <td className="mono" style={{ color: "var(--teal)" }} data-hide="mobile">{formatCurrency(p.paidAmount)}</td>
                   <td>{p.paymentStatus === "PAID" ? <span className="pill pill--green">Paid</span> : p.paymentStatus === "PARTIAL" ? <span className="pill pill--amber">Partial</span> : <span className="pill pill--rose">Unpaid</span>}</td>
                   <td><button className="btn btn--ghost btn--icon btn--sm" onClick={() => setView(p)}><Eye size={13} /></button></td>
                 </tr>

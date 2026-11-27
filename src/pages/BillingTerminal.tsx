@@ -197,7 +197,7 @@ export const BillingTerminal = ({ globalSearch, onNavigate }: { globalSearch: st
         </div>
       </div>
 
-      <div className="grid" style={{ gridTemplateColumns: "1fr 380px", gap: 18, alignItems: "start" }}>
+      <div className="grid billing-grid">
         {/* Left: search + results */}
         <div className="flex-col gap-3">
           <div className="card" style={{ padding: 16 }}>
@@ -226,7 +226,7 @@ export const BillingTerminal = ({ globalSearch, onNavigate }: { globalSearch: st
                 const fefo = pickFEFO(db.batches, m.id);
                 const expClass = fefo ? classifyBatch(fefo.expiryDate) : "EXPIRED";
                 return (
-                  <button key={m.id} className="card" onClick={() => addToCart(m.id)} style={{ padding: 14, display: "flex", alignItems: "center", gap: 14, textAlign: "left", cursor: "pointer" }}>
+                  <button key={m.id} className="card billing-search-result" onClick={() => addToCart(m.id)} style={{ padding: 14, display: "flex", alignItems: "center", gap: 14, textAlign: "left", cursor: "pointer" }}>
                     <div style={{ width: 42, height: 42, borderRadius: 11, background: "var(--tile-green)", display: "flex", alignItems: "center", justifyContent: "center", border: "1px solid var(--border-subtle)" }}>
                       <Pill size={18} color="var(--primary)" />
                     </div>
@@ -282,7 +282,7 @@ export const BillingTerminal = ({ globalSearch, onNavigate }: { globalSearch: st
                         <td className="mono text-sm">{c.selectedBatch.batchNumber}<div className="text-xs text-dim">exp {formatDate(c.selectedBatch.expiryDate)}</div></td>
                         <td className="mono">{formatCurrency(c.unitPrice)}</td>
                         <td>
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-2 billing-cart-qty">
                             <button className="btn btn--ghost btn--icon btn--sm" onClick={() => updateQty(i, -1)}><Minus size={12} /></button>
                             <input className="input" style={{ width: 50, textAlign: "center", padding: "4px" }} value={c.quantity} onChange={(e) => setQty(i, parseInt(e.target.value) || 1)} />
                             <button className="btn btn--ghost btn--icon btn--sm" onClick={() => updateQty(i, 1)}><Plus size={12} /></button>
@@ -301,7 +301,7 @@ export const BillingTerminal = ({ globalSearch, onNavigate }: { globalSearch: st
         </div>
 
         {/* Right: customer + totals */}
-        <div className="flex-col gap-3">
+        <div className="flex-col gap-3 billing-cart-side">
           <div className="card" style={{ padding: 16 }}>
             <div className="card__head"><User size={16} color="var(--primary)" /><div className="card__title">Customer & Rx</div></div>
             <div className="flex-col gap-2">
@@ -427,7 +427,7 @@ const CheckoutModal = ({ total, mode, onClose, onComplete }: {
         </div>
         <div className="field">
           <label className="label">Payment Method</label>
-          <div className="grid grid-4" style={{ gap: 8 }}>
+          <div className="grid grid-4 checkout-methods" style={{ gap: 8 }}>
             {methods.map((m) => {
               const Icon = m.icon;
               return (

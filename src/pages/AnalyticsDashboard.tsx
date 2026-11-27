@@ -212,7 +212,7 @@ const KPI = ({ label, value, icon: Icon, grad, tile, sub }: any) => (
 const TrendChart = ({ trend, maxSales }: { trend: { date: string; sales: number; profit: number }[]; maxSales: number }) => {
   const w = 760, h = 200, pad = 30, bw = (w - pad * 2) / trend.length;
   return (
-    <div style={{ overflowX: "auto" }}>
+    <div className="trend-chart">
       <svg viewBox={`0 0 ${w} ${h + 30}`} style={{ width: "100%", minWidth: 600, height: h + 30 }}>
         {[0, 0.25, 0.5, 0.75, 1].map((p, i) => (
           <g key={i}>

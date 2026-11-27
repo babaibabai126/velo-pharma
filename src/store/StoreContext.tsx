@@ -152,19 +152,20 @@ export const StoreProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const updateSalePayment: StoreCtx["updateSalePayment"] = (id, paidAmount, status) => {
-    setDB((d) => ({
-      ...d,
-      sales: d.sales.map((s) => {
-        if (s.id !== id) return s;
-        const diff = paidAmount - s.paidAmount;
-        const customers = d.customers.map((c) =>
-          c.id === s.customerId ? { ...c, outstandingBalance: Math.max(0, c.outstandingBalance - diff) } : c
-        );
-        // we mutate customers via outer setDB below
-        setTimeout(() => setDB((dd) => ({ ...dd, customers })), 0);
-        return { ...s, paidAmount, paymentStatus: status, updatedAt: new Date().toISOString() };
-      }),
-    }));
+    setDB((d) => {
+      const sale = d.sales.find((s) => s.id === id);
+      if (!sale) return d;
+      const diff = paidAmount - sale.paidAmount;
+      return {
+        ...d,
+        sales: d.sales.map((s) =>
+          s.id === id ? { ...s, paidAmount, paymentStatus: status, updatedAt: new Date().toISOString() } : s
+        ),
+        customers: d.customers.map((c) =>
+          c.id === sale.customerId ? { ...c, outstandingBalance: Math.max(0, c.outstandingBalance - diff) } : c
+        ),
+      };
+    });
   };
 
   const addMedicine: StoreCtx["addMedicine"] = (m) => {

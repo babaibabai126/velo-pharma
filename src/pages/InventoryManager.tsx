@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   Boxes, Plus, Search, Pill, AlertTriangle, XCircle, CheckCircle2,
   Trash2, Edit3, SlidersHorizontal, Package, ShieldAlert,
@@ -100,8 +100,8 @@ export const InventoryManager = ({ globalSearch }: { globalSearch: string }) => 
           <table className="table">
             <thead>
               <tr>
-                <th style={{ width: 30 }}></th><th>Medicine</th><th>Category</th><th>Form</th>
-                <th>Rack</th><th>Stock</th><th>Min Alert</th><th>Stock Value</th><th>Status</th><th></th>
+                <th style={{ width: 30 }}></th><th>Medicine</th><th data-hide="mobile">Category</th><th data-hide="mobile">Form</th>
+                <th data-hide="mobile">Rack</th><th>Stock</th><th data-hide="mobile">Min Alert</th><th data-hide="mobile">Stock Value</th><th>Status</th><th></th>
               </tr>
             </thead>
             <tbody>
@@ -112,19 +112,19 @@ export const InventoryManager = ({ globalSearch }: { globalSearch: string }) => 
                 const isLow = m.stock < m.minStockAlert;
                 const isOut = m.stock === 0;
                 return (
-                  <>
-                    <tr key={m.id} style={{ cursor: "pointer" }} onClick={() => setExpanded(expanded === m.id ? null : m.id)}>
+                  <React.Fragment key={m.id}>
+                    <tr style={{ cursor: "pointer" }} onClick={() => setExpanded(expanded === m.id ? null : m.id)}>
                       <td style={{ color: "var(--text-dim)" }}>{expanded === m.id ? "▾" : "▸"}</td>
                       <td>
                         <div style={{ fontWeight: 700 }}>{m.name} {m.strength && <span className="text-dim">({m.strength})</span>}</div>
                         <div className="text-xs text-dim">{m.genericName} • {m.manufacturer}{m.prescriptionRequired && <span style={{ color: "var(--rose)" }}> • Rx</span>}</div>
                       </td>
-                      <td className="text-sm">{m.category}</td>
-                      <td className="text-sm">{m.dosageForm}</td>
-                      <td className="mono text-sm">{m.rackLocation || "—"}</td>
+                      <td className="text-sm" data-hide="mobile">{m.category}</td>
+                      <td className="text-sm" data-hide="mobile">{m.dosageForm}</td>
+                      <td className="mono text-sm" data-hide="mobile">{m.rackLocation || "—"}</td>
                       <td className="mono" style={{ fontWeight: 700, color: isOut ? "var(--rose)" : isLow ? "var(--amber)" : "var(--text-main)" }}>{m.stock}</td>
-                      <td className="mono text-sm text-muted">{m.minStockAlert}</td>
-                      <td className="mono text-sm">{formatCurrency(m.stockValue)}</td>
+                      <td className="mono text-sm text-muted" data-hide="mobile">{m.minStockAlert}</td>
+                      <td className="mono text-sm" data-hide="mobile">{formatCurrency(m.stockValue)}</td>
                       <td>
                         {isOut ? <span className="pill pill--rose">Out of stock</span>
                           : isLow ? <span className="pill pill--amber">Low stock</span>
@@ -149,7 +149,7 @@ export const InventoryManager = ({ globalSearch }: { globalSearch: string }) => 
                             <div className="text-sm text-dim">No batches. <button className="btn btn--ghost btn--sm" onClick={() => setBatchModal({ med: m })}>Add first batch</button></div>
                           ) : (
                             <table className="table" style={{ background: "var(--bg-card)", borderRadius: "var(--radius-sm)", overflow: "hidden" }}>
-                              <thead><tr><th>Batch No.</th><th>Expiry</th><th>Days Left</th><th>Purchase</th><th>MRP</th><th>Retail</th><th>Wholesale</th><th>Qty</th><th>Status</th><th></th></tr></thead>
+                              <thead><tr><th>Batch No.</th><th>Expiry</th><th>Days Left</th><th data-hide="mobile">Purchase</th><th>MRP</th><th data-hide="mobile">Retail</th><th data-hide="mobile">Wholesale</th><th>Qty</th><th>Status</th><th></th></tr></thead>
                               <tbody>
                                 {m.batches.map((b) => {
                                   const cls = classifyBatch(b.expiryDate);
@@ -179,7 +179,7 @@ export const InventoryManager = ({ globalSearch }: { globalSearch: string }) => 
                         </td>
                       </tr>
                     )}
-                  </>
+                  </React.Fragment>
                 );
               })}
             </tbody>

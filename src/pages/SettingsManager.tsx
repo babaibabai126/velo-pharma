@@ -1,13 +1,17 @@
 import { useState } from "react";
-import { Settings, Save, RotateCcw, Building2, Receipt, Printer, ShieldCheck, Store } from "lucide-react";
+import { Settings, Save, RotateCcw, Building2, Receipt, Printer, ShieldCheck, Store, KeyRound, LogOut } from "lucide-react";
 import { useStore } from "../store/StoreContext";
+import { useAuth } from "../store/AuthContext";
 import { useToast } from "../components/ui";
 import type { StoreSettings } from "../types";
 
 export const SettingsManager = () => {
   const { db, setSettings, resetAll } = useStore();
+  const { user, logout, changePassword } = useAuth();
   const toast = useToast();
   const [f, setF] = useState<StoreSettings>({ ...db.settings });
+  const [cur, setCur] = useState("");
+  const [next, setNext] = useState("");
   const set = (k: keyof StoreSettings, v: any) => setF((p) => ({ ...p, [k]: v }));
 
   const save = () => { setSettings(f); toast("success", "Settings saved", "Pharmacy configuration updated"); };
@@ -17,6 +21,11 @@ export const SettingsManager = () => {
       toast("success", "Data reset", "All data restored to seed defaults");
       setTimeout(() => window.location.reload(), 600);
     }
+  };
+  const doChangePw = () => {
+    const r = changePassword(cur, next);
+    if (r.ok) { toast("success", "Password changed", "Use the new password next time you sign in"); setCur(""); setNext(""); }
+    else toast("error", "Could not change", r.error || "Failed");
   };
 
   return (
@@ -32,7 +41,7 @@ export const SettingsManager = () => {
         </div>
       </div>
 
-      <div className="grid" style={{ gridTemplateColumns: "1fr 1fr", gap: 18 }}>
+      <div className="grid settings-grid" style={{ gridTemplateColumns: "1fr 1fr", gap: 18 }}>
         {/* Store identity */}
         <div className="card" style={{ padding: 18 }}>
           <div className="card__head"><Store size={18} color="var(--primary)" /><div className="card__title">Store Identity</div></div>
@@ -81,6 +90,41 @@ export const SettingsManager = () => {
           <div className="card" style={{ padding: 18 }}>
             <div className="card__head"><Printer size={18} color="var(--primary)" /><div className="card__title">Invoice Footer</div></div>
             <div className="field"><textarea className="textarea" style={{ minHeight: 80 }} value={f.invoiceFooter} onChange={(e) => set("invoiceFooter", e.target.value)} /></div>
+          </div>
+        </div>
+      </div>
+
+      {/* Account / password */}
+      <div className="card" style={{ padding: 18 }}>
+        <div className="card__head"><KeyRound size={18} color="var(--primary)" /><div className="card__title">My Account</div></div>
+        <div className="flex-col gap-3">
+          <div className="field-row">
+            <div className="field">
+              <label className="label">Signed in as</label>
+              <div style={{ fontWeight: 700, padding: "9px 0" }}>{user?.name}</div>
+            </div>
+            <div className="field">
+              <label className="label">Email</label>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 13, padding: "9px 0" }}>{user?.email}</div>
+            </div>
+            <div className="field">
+              <label className="label">Role</label>
+              <div style={{ padding: "9px 0" }}><span className="pill pill--green">{user?.role}</span></div>
+            </div>
+          </div>
+          <div style={{ height: 1, background: "var(--border-subtle)", margin: "4px 0" }} />
+          <div className="text-sm text-muted" style={{ fontWeight: 600 }}>Change password</div>
+          <div className="field-row">
+            <div className="field"><label className="label">Current Password</label>
+              <input className="input" type="password" autoComplete="current-password" value={cur} onChange={(e) => setCur(e.target.value)} placeholder="••••••••" />
+            </div>
+            <div className="field"><label className="label">New Password</label>
+              <input className="input" type="password" autoComplete="new-password" value={next} onChange={(e) => setNext(e.target.value)} placeholder="Min 6 characters" />
+            </div>
+          </div>
+          <div className="flex gap-2" style={{ flexWrap: "wrap" }}>
+            <button className="btn btn--accent" onClick={doChangePw} disabled={!cur || !next}><KeyRound size={14} /> Update Password</button>
+            <button className="btn btn--danger" onClick={logout}><LogOut size={14} /> Sign out</button>
           </div>
         </div>
       </div>
